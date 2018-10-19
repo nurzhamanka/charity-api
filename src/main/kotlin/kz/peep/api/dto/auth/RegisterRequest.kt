@@ -5,12 +5,8 @@ import javax.validation.constraints.Size
 
 data class RegisterRequest (
         @NotBlank
-        @Size(min = 2, max = 20)
-        var firstName: String,
-
-        @NotBlank
-        @Size(min = 2, max = 20)
-        var lastName: String,
+        @Size(min = 2, max = 40)
+        var name: String,
 
         @NotBlank
         @Size(min = 5, max = 15)

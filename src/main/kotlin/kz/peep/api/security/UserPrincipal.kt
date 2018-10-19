@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.util.*
 
 class UserPrincipal (val user: AppUser,
-                     private val authorities: Collection<out GrantedAuthority>) : UserDetails {
+                     private val authorities: Collection<GrantedAuthority>) : UserDetails {
 
     companion object {
         fun create(user: AppUser) : UserPrincipal {
@@ -24,7 +24,7 @@ class UserPrincipal (val user: AppUser,
         return user.password
     }
 
-    override fun getAuthorities(): Collection<out GrantedAuthority> {
+    override fun getAuthorities(): Collection<GrantedAuthority> {
         return authorities
     }
 

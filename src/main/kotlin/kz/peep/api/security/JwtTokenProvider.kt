@@ -12,19 +12,19 @@ import java.util.*
 class JwtTokenProvider {
 
     companion object {
-        val logger : Logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
+        private val logger : Logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
     }
 
-    //@Value("%{app.jwtSecret}")
-    private var jwtSecret : String = "JWTSuperSecretKey"
+    @Value("\${app.jwtSecret}")
+    private lateinit var jwtSecret : String
 
-    //@Value("%{app.jwtExpirationInMs}}")
-    private var jwtExpirationInMs : Int = 604800000
+    @Value("\${app.jwtExpirationInMs}")
+    private var jwtExpirationInMs : Int? = null
 
     fun generateToken(auth: Authentication) : String {
         val userPrincipal = auth.principal as UserPrincipal
         val now = Date()
-        val expiryDate = Date(now.time + jwtExpirationInMs)
+        val expiryDate = Date(now.time + jwtExpirationInMs!!)
         return Jwts.builder()
                 .setSubject(userPrincipal.user.id.toString())
                 .setIssuedAt(Date())

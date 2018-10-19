@@ -17,32 +17,32 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.util.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 class AuthController (private val authManager: AuthenticationManager,
                       private val userRepository: UserRepository,
                       private val roleRepository: RoleRepository,
                       private val passwordEncoder: BCryptPasswordEncoder,
                       private val tokenProvider: JwtTokenProvider) {
 
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(AuthController::class.java)
+    }
 
-    val logger: Logger = LoggerFactory.getLogger(AuthController::class.java)
-
+    @GetMapping
+    fun welcome() : ResponseEntity<*> = ResponseEntity.ok(ApiResponse(true, "Hello! Send POST requests to /login or /register"))
 
     @PostMapping("/login")
     fun authenticateUser(@Valid @RequestBody loginRequest: LoginRequest) : ResponseEntity<*> {
         val auth = authManager.authenticate(UsernamePasswordAuthenticationToken(loginRequest.username, loginRequest.password))
         SecurityContextHolder.getContext().authentication = auth
         val jwt = tokenProvider.generateToken(auth)
-        return ResponseEntity.ok(JwtAuthenticationResponse(true, jwt))
+        return ResponseEntity.ok(JwtAuthenticationResponse(jwt))
     }
 
     @PostMapping("/register")
@@ -52,8 +52,7 @@ class AuthController (private val authManager: AuthenticationManager,
         }
 
         val user = AppUser(
-                firstName = registerRequest.firstName,
-                lastName = registerRequest.lastName,
+                name = registerRequest.name,
                 username = registerRequest.username,
                 password = registerRequest.password
         )
@@ -68,7 +67,7 @@ class AuthController (private val authManager: AuthenticationManager,
         user.roles = Collections.singleton(userRole)
 
         val result = userRepository.save(user)
-        val location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/users/{username}")
+        val location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/users/{username}")
                 .buildAndExpand(result.username).toUri()
 
         return ResponseEntity.created(location).body(ApiResponse(true, "User registered successfully."))

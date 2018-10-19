@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse
 class JwtAuthenticationFilter : OncePerRequestFilter() {
 
     companion object {
-        val logger : Logger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
+        private val logger : Logger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
     }
 
     @Autowired

@@ -24,11 +24,7 @@ data class AppUser (
 
         @NotBlank
         @Size(max = 20)
-        val firstName: String,
-
-        @NotBlank
-        @Size(max = 20)
-        val lastName: String,
+        val name: String,
 
         @ManyToMany(fetch = FetchType.LAZY)
         @JoinTable(name = "USER_ROLES",
