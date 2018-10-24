@@ -26,8 +26,11 @@ class SpringSecurityAuditAware : AuditorAware<AppUser> {
         if (auth == null || !auth.isAuthenticated || auth !is AnonymousAuthenticationToken)
             return Optional.empty()
 
-        val userPrincipal = auth.principal as UserPrincipal
-        val user = userPrincipal.user
+        val userPrincipal = auth.principal
+        var user : AppUser? = null
+        if (userPrincipal is UserPrincipal) {
+            user = userPrincipal.user
+        }
         return Optional.ofNullable(user)
     }
 }
