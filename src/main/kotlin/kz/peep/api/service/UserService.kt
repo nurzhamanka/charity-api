@@ -25,7 +25,7 @@ class UserService (private val userRepository: UserRepository) {
                 .build()
 
     fun isUsernameAvailable(username: String) : UserAvailability {
-        val isAvailable = userRepository.existsByUsername(username)
+        val isAvailable = !userRepository.existsByUsername(username)
         return UserAvailability(isAvailable)
     }
 
