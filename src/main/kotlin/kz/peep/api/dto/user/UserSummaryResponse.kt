@@ -2,7 +2,7 @@ package kz.peep.api.dto.user
 
 import org.apache.commons.lang3.ObjectUtils
 
-class UserSummary (
+class UserSummaryResponse (
         val id: Long,
         val username: String,
         val name: String
@@ -22,7 +22,7 @@ class UserSummary (
         fun name(name: String) = apply { this.name = name }
 
         fun build() = if (ObjectUtils.allNotNull(id, username, name))
-            UserSummary(this)
+            UserSummaryResponse(this)
         else throw IllegalStateException("Properties must not be null.")
     }
 }

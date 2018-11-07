@@ -8,13 +8,13 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
-import java.lang.IllegalStateException
 
 @ControllerAdvice
 class AppExceptionHandler : ResponseEntityExceptionHandler() {
@@ -31,7 +31,7 @@ class AppExceptionHandler : ResponseEntityExceptionHandler() {
         return handleExceptionInternal(ex, response, HttpHeaders(), HttpStatus.FORBIDDEN, request)
     }
 
-    @ExceptionHandler(value = [BadRequestException::class])
+    @ExceptionHandler(value = [BadRequestException::class, UsernameNotFoundException::class])
     protected fun handleBadRequest(ex: RuntimeException, request: WebRequest): ResponseEntity<Any> {
         val response = ApiResponse(false, ex.message ?: "Unknown error")
         return handleExceptionInternal(ex, response, HttpHeaders(), HttpStatus.BAD_REQUEST, request)

@@ -3,6 +3,7 @@ package kz.peep.api.entities
 import kz.peep.api.entities.audit.DateAudit
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 
 @Entity
@@ -24,7 +25,10 @@ data class AppUser (
 
         @NotBlank
         @Size(max = 20)
-        val name: String,
+        var name: String,
+
+        @Pattern(regexp="^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$")
+        var phoneNumber: String? = null,
 
         @ManyToMany(fetch = FetchType.LAZY)
         @JoinTable(name = "USER_ROLES",
