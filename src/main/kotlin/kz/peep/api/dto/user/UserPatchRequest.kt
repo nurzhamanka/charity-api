@@ -13,5 +13,9 @@ data class UserPatchRequest (
         var password: String? = null,
 
         @Pattern(regexp="^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$")
-        val phoneNumber: String? = null
+        val phoneNumber: String? = null,
+
+        val avatarStyle: String? = null,
+
+        val avatarColor: String? = null
 )

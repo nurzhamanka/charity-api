@@ -3,7 +3,7 @@ package kz.peep.api.service
 import kz.peep.api.dto.ApiResponse
 import kz.peep.api.dto.user.*
 import kz.peep.api.entities.AppUser
-import kz.peep.api.entities.UserRole
+import kz.peep.api.infrastructure.enums.UserRole
 import kz.peep.api.infrastructure.exception.BadRequestException
 import kz.peep.api.infrastructure.exception.ResourceNotFoundException
 import kz.peep.api.repositories.RoleRepository
@@ -73,6 +73,9 @@ class UserService (private val userRepository: UserRepository,
                 .id(user.id)
                 .username(user.username)
                 .name(user.name)
+                .phone(user.phoneNumber)
+                .avatarStyle(user.avatarStyle)
+                .avatarColor(user.avatarColor)
                 .build()
     }
 
@@ -87,6 +90,8 @@ class UserService (private val userRepository: UserRepository,
                 "name" -> user.name = patchProperty
                 "phoneNumber" -> user.phoneNumber = patchProperty
                 "password" -> user.password = if (passwordEncoder.matches(patchProperty, user.password)) throw BadRequestException("You cannot use the same password.") else passwordEncoder.encode(patchProperty)
+                "avatarStyle" -> user.avatarStyle = patchProperty
+                "avatarColor" -> user.avatarColor = patchProperty
             }
         }
         userRepository.save(user)

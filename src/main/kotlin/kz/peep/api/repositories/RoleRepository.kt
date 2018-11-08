@@ -1,7 +1,7 @@
 package kz.peep.api.repositories
 
 import kz.peep.api.entities.AppUserRole
-import kz.peep.api.entities.UserRole
+import kz.peep.api.infrastructure.enums.UserRole
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

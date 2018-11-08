@@ -1,4 +1,4 @@
-package kz.peep.api.entities
+package kz.peep.api.infrastructure.enums
 
 enum class UserRole {
     ROLE_USER,
