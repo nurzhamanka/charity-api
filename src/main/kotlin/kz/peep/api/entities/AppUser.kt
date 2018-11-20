@@ -1,6 +1,5 @@
 package kz.peep.api.entities
 
-import kz.peep.api.dto.user.UserAvatar
 import kz.peep.api.entities.audit.DateAudit
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
@@ -31,10 +30,12 @@ data class AppUser (
         @Pattern(regexp="^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$")
         var phoneNumber: String? = null,
 
-        // TODO: persist user avatar entities in the DB?
-        var avatarStyle: String = UserAvatar.generateAvatar().style,
-
-        var avatarColor: String = UserAvatar.generateAvatar().color,
+        @Embedded
+        @AttributeOverrides(
+                AttributeOverride(name = "style", column = Column(name = "avatarStyle")),
+                AttributeOverride(name = "color", column = Column(name = "avatarColor"))
+        )
+        var avatar: UserAvatar = UserAvatar.generateAvatar(),
 
         @ManyToMany(fetch = FetchType.LAZY)
         @JoinTable(name = "USER_ROLES",

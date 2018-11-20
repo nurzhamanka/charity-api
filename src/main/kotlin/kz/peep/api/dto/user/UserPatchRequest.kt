@@ -10,6 +10,10 @@ data class UserPatchRequest (
 
         @NotBlank
         @Size(min = 6, max = 20)
+        var oldPassword: String? = null,
+
+        @NotBlank
+        @Size(min = 6, max = 20)
         var password: String? = null,
 
         @Pattern(regexp="^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$")

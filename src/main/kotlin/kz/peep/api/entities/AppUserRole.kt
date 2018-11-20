@@ -1,6 +1,6 @@
 package kz.peep.api.entities
 
-import kz.peep.api.infrastructure.enums.UserRole
+import kz.peep.api.infrastructure.structs.UserRole
 import org.hibernate.annotations.NaturalId
 import javax.persistence.*
 

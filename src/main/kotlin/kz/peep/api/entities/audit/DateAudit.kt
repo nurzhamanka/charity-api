@@ -17,9 +17,9 @@ open class DateAudit : Serializable {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private lateinit var createdAt : Instant
+    lateinit var createdAt : Instant
 
     @LastModifiedDate
     @Column(nullable = false)
-    private lateinit var updatedAt : Instant
+    lateinit var updatedAt : Instant
 }

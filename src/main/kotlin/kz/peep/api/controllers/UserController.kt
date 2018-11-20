@@ -1,6 +1,7 @@
 package kz.peep.api.controllers
 
 import kz.peep.api.dto.auth.LoginRequest
+import kz.peep.api.dto.user.UserDeleteRequest
 import kz.peep.api.dto.user.UserPatchRequest
 import kz.peep.api.dto.user.UserRegisterRequest
 import kz.peep.api.security.CurrentUser
@@ -34,13 +35,14 @@ class UserController (private val userService: UserService,
     fun getUserProfile(@PathVariable("username") username: String) = userService.getUserProfile(username)
 
     @PatchMapping("/{username}")
-    @PreAuthorize("hasRole('ROLE_USER') and authentication.principal.user.username == #username")
+    @PreAuthorize("hasRole('ROLE_USER') and authentication.principal.user.username == #username or hasRole('ROLE_ADMIN')")
     fun patchUserProfile(@PathVariable("username") username: String,
-                        @RequestBody patchRequest: UserPatchRequest,
-                        @CurrentUser currentUser: UserPrincipal) = userService.patchUserProfile(username, patchRequest, currentUser)
+                         @Valid @RequestBody patchRequest: UserPatchRequest,
+                         @CurrentUser currentUser: UserPrincipal) = userService.patchUserProfile(username, patchRequest, currentUser)
 
     @DeleteMapping("/{username}")
-    @PreAuthorize("hasRole('ROLE_USER') and authentication.principal.user.username == #username")
+    @PreAuthorize("hasRole('ROLE_USER') and authentication.principal.user.username == #username or hasRole('ROLE_ADMIN')")
     fun deleteUserProfile(@PathVariable("username") username: String,
-                          @CurrentUser currentUser: UserPrincipal) = userService.deleteUserProfile(username, currentUser)
+                          @Valid @RequestBody deleteRequest: UserDeleteRequest,
+                          @CurrentUser currentUser: UserPrincipal) = userService.deleteUserProfile(username, deleteRequest, currentUser)
 }

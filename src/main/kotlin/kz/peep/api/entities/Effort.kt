@@ -1,9 +1,8 @@
 package kz.peep.api.entities
 
 import kz.peep.api.entities.audit.UserDateAudit
+import kz.peep.api.infrastructure.structs.ClothingType
 import javax.persistence.*
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Size
 
 @Entity
 @Table(name = "EFFORT")
@@ -12,7 +11,17 @@ data class Effort (
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long,
 
-        @NotBlank
-        @Size(max = 50)
-        val name: String
+        @ManyToOne(fetch = FetchType.EAGER)
+        @JoinColumn(name = "EFFORT_TYPE_ID")
+        val donationType : EffortType,
+
+        val moneyAmount: Double? = null,
+        val quantity: Int? = null,
+
+        @Enumerated(EnumType.STRING)
+        val clothingType: ClothingType? = null,
+
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "ORGANIZATION_ID")
+        val organization: Organization
 ) : UserDateAudit()

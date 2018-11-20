@@ -13,8 +13,8 @@ abstract class UserDateAudit : DateAudit() {
 
     @CreatedBy
     @Column(updatable = false)
-    private lateinit var createdBy: AppUser
+    lateinit var createdBy: AppUser
 
     @LastModifiedBy
-    private lateinit var updatedBy: AppUser
+    lateinit var updatedBy: AppUser
 }

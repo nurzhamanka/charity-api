@@ -3,9 +3,9 @@ package kz.peep.api.service
 import kz.peep.api.dto.ApiResponse
 import kz.peep.api.dto.user.*
 import kz.peep.api.entities.AppUser
-import kz.peep.api.infrastructure.enums.UserRole
 import kz.peep.api.infrastructure.exception.BadRequestException
 import kz.peep.api.infrastructure.exception.ResourceNotFoundException
+import kz.peep.api.infrastructure.structs.UserRole
 import kz.peep.api.repositories.RoleRepository
 import kz.peep.api.repositories.UserRepository
 import kz.peep.api.security.UserPrincipal
@@ -74,8 +74,7 @@ class UserService (private val userRepository: UserRepository,
                 .username(user.username)
                 .name(user.name)
                 .phone(user.phoneNumber)
-                .avatarStyle(user.avatarStyle)
-                .avatarColor(user.avatarColor)
+                .avatar(user.avatar)
                 .build()
     }
 
@@ -89,9 +88,13 @@ class UserService (private val userRepository: UserRepository,
             when (property.name) {
                 "name" -> user.name = patchProperty
                 "phoneNumber" -> user.phoneNumber = patchProperty
-                "password" -> user.password = if (passwordEncoder.matches(patchProperty, user.password)) throw BadRequestException("You cannot use the same password.") else passwordEncoder.encode(patchProperty)
-                "avatarStyle" -> user.avatarStyle = patchProperty
-                "avatarColor" -> user.avatarColor = patchProperty
+                "password" -> run {
+                    val oldPass = patchRequest.oldPassword ?: throw BadRequestException("You have to provide your current password.")
+                    if (!passwordEncoder.matches(oldPass, user.password)) throw BadRequestException("Incorrect current password.")
+                    user.password = if (passwordEncoder.matches(patchProperty, user.password)) throw BadRequestException("You cannot use the same password.") else passwordEncoder.encode(patchProperty)
+                }
+                "avatarStyle" -> user.avatar.style = patchProperty
+                "avatarColor" -> user.avatar.color = patchProperty
             }
         }
         userRepository.save(user)
@@ -100,8 +103,10 @@ class UserService (private val userRepository: UserRepository,
     }
 
     fun deleteUserProfile(username: String,
+                          deleteRequest: UserDeleteRequest,
                           currentUser: UserPrincipal) : ResponseEntity<*> {
         val user = userRepository.findByUsername(username)!!  // because user will exist after authorization
+        if (!passwordEncoder.matches(deleteRequest.password, user.password)) throw BadRequestException("Incorrect password.")
         logger.info("User for deletion: $user")
         userRepository.delete(user)
         return ResponseEntity.ok().body(ApiResponse(true, "User deleted successfully"))

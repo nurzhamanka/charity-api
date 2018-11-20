@@ -10,13 +10,30 @@ import javax.validation.constraints.Size
 data class Organization (
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Long,
+        val id: Long = -1,
 
         @NotBlank
         @Size(max = 50)
         var name: String,
 
-        @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-        @JoinColumn(name = "MANAGER_ID")
-        val manager: AppUser
+        var description: String? = null,
+
+        @Embedded
+        @AttributeOverrides(
+                AttributeOverride(name = "longitude", column = Column(name = "locationLon")),
+                AttributeOverride(name = "latitude", column = Column(name = "locationLat"))
+        )
+        var location: Location? = null,
+
+        @OneToMany(mappedBy = "organization",
+                cascade = [CascadeType.ALL],
+                fetch = FetchType.EAGER,
+                orphanRemoval = true)
+        val efforts: Set<Effort> = HashSet(),
+
+        @ManyToMany(fetch = FetchType.EAGER)
+        @JoinTable(name = "ORGANIZATION_EFFORT_TYPE",
+                joinColumns = [JoinColumn(name = "ORGANIZATION_ID")],
+                inverseJoinColumns = [JoinColumn(name = "EFFORT_TYPE_ID")])
+        var donationTypes: Set<EffortType> = HashSet()
 ) : UserDateAudit()

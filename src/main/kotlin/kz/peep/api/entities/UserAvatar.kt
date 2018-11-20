@@ -1,5 +1,8 @@
-package kz.peep.api.dto.user
+package kz.peep.api.entities
 
+import javax.persistence.Embeddable
+
+@Embeddable
 class UserAvatar (
         var style: String,
         var color: String
