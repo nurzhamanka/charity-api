@@ -4,6 +4,7 @@ import kz.peep.api.entities.audit.DateAudit
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
+import javax.validation.constraints.PositiveOrZero
 import javax.validation.constraints.Size
 
 @Entity
@@ -29,6 +30,9 @@ data class AppUser (
 
         @Pattern(regexp="^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$")
         var phoneNumber: String? = null,
+
+        @PositiveOrZero
+        var points: Int = 0,
 
         @Embedded
         @AttributeOverrides(

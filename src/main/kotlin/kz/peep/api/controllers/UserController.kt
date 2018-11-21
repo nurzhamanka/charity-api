@@ -17,6 +17,11 @@ import javax.validation.Valid
 class UserController (private val userService: UserService,
                       private val authService: AuthService) {
 
+    @GetMapping
+    @PreAuthorize("hasRole('ROLE_USER')")
+    fun getUsers(@RequestParam(name = "page", defaultValue = "1") page: Int,
+                 @RequestParam(name = "entries", defaultValue = "10") perPage: Int) = userService.getUsers(page, perPage)
+
     @GetMapping("/me")
     @PreAuthorize("hasRole('ROLE_USER')")
     fun getCurrentUser(@CurrentUser currentUser: UserPrincipal) = userService.getCurrentUser(currentUser)

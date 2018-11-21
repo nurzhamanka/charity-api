@@ -14,11 +14,5 @@ data class EffortType (
         @Enumerated(EnumType.STRING)
         @NaturalId
         @Column(length = 60)
-        val name: EffortType,
-
-        @OneToMany(mappedBy = "donationType",
-                cascade = [CascadeType.ALL],
-                fetch = FetchType.EAGER,
-                orphanRemoval = true)
-        val efforts: MutableList<Effort> = ArrayList()
+        val name: EffortType
 )

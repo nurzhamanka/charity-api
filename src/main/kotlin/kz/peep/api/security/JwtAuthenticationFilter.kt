@@ -39,7 +39,8 @@ class JwtAuthenticationFilter : OncePerRequestFilter() {
             JwtAuthenticationFilter.logger.error("Could not set user authentication in security context", ex)
         }
 
-        chain.doFilter(req, res)
+        try {chain.doFilter(req, res)}
+        catch (ex: Exception) {}
     }
 
     private fun getJwtFromRequest(req: HttpServletRequest) : String? {

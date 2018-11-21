@@ -34,12 +34,12 @@ class OrganizationController (private val organizationService: OrganizationServi
 
     @PatchMapping("/{id:\\d+}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    fun patchUserProfile(@PathVariable(name = "id") id: Long,
+    fun patchOrganization(@PathVariable(name = "id") id: Long,
                          @Valid @RequestBody patchRequest: OrganizationPatchRequest,
                          @CurrentUser currentUser: UserPrincipal) = organizationService.patchOrganizationDetails(id, patchRequest, currentUser)
 
     @DeleteMapping("/{id:\\d+}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    fun deleteUserProfile(@PathVariable(name = "id") id: Long,
+    fun deleteOrganization(@PathVariable(name = "id") id: Long,
                           @CurrentUser currentUser: UserPrincipal) = organizationService.deleteOrganizationDetails(id, currentUser)
 }

@@ -9,7 +9,7 @@ import javax.persistence.*
 data class Effort (
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Long,
+        val id: Long = -1,
 
         @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "EFFORT_TYPE_ID")

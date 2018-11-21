@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 class AppExceptionHandler : ResponseEntityExceptionHandler() {
 
-    @ExceptionHandler(value = [AppException::class, IllegalStateException::class])
+    @ExceptionHandler(value = [AppException::class, IllegalStateException::class, IllegalArgumentException::class])
     protected fun handleInternalError(ex: RuntimeException, request: WebRequest) = {
         val response = ApiResponse(false, ex.message ?: "Unknown error")
         handleExceptionInternal(ex, response, HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request)

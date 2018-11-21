@@ -18,22 +18,15 @@ data class Organization (
 
         var description: String? = null,
 
-        @Embedded
-        @AttributeOverrides(
-                AttributeOverride(name = "longitude", column = Column(name = "locationLon")),
-                AttributeOverride(name = "latitude", column = Column(name = "locationLat"))
-        )
-        var location: Location? = null,
-
         @OneToMany(mappedBy = "organization",
                 cascade = [CascadeType.ALL],
                 fetch = FetchType.EAGER,
                 orphanRemoval = true)
-        val efforts: Set<Effort> = HashSet(),
+        val efforts: MutableSet<Effort> = HashSet(),
 
         @ManyToMany(fetch = FetchType.EAGER)
         @JoinTable(name = "ORGANIZATION_EFFORT_TYPE",
                 joinColumns = [JoinColumn(name = "ORGANIZATION_ID")],
                 inverseJoinColumns = [JoinColumn(name = "EFFORT_TYPE_ID")])
-        var donationTypes: Set<EffortType> = HashSet()
+        var donationTypes: MutableSet<EffortType> = HashSet()
 ) : UserDateAudit()

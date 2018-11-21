@@ -52,7 +52,8 @@ class SecurityConfig (val apiUserDetailsService : ApiUserDetailsService,
                 .authorizeRequests()
                     .antMatchers("/auth/**").permitAll()
                     .antMatchers("/users/**").permitAll()
-                    .antMatchers("/actuator/**").permitAll()
+                    .antMatchers("/orgs/**").permitAll()
+                    .antMatchers("/efforts/**").permitAll()
                     .anyRequest().authenticated()
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
