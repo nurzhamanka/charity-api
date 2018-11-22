@@ -10,7 +10,7 @@ interface EffortRepository : JpaRepository<Effort, Long> {
 
     fun findByOrganizationId(id: Long, pageable: Pageable) : Page<Effort>
 
-    fun findByCreatedBy(createdById: Long, pageable: Pageable): Page<Effort>
+    fun findByCreatedBy(createdBy: String, pageable: Pageable): Page<Effort>
 
     fun findByDonationType(donationType: EffortType, pageable: Pageable) : Page<Effort>
 }

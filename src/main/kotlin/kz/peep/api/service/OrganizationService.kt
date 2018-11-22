@@ -6,6 +6,7 @@ import kz.peep.api.dto.orgs.OrganizationCreateRequest
 import kz.peep.api.dto.orgs.OrganizationDetailsResponse
 import kz.peep.api.dto.orgs.OrganizationPatchRequest
 import kz.peep.api.entities.Organization
+import kz.peep.api.infrastructure.exception.BadRequestException
 import kz.peep.api.infrastructure.exception.ResourceNotFoundException
 import kz.peep.api.infrastructure.structs.UserRole
 import kz.peep.api.repositories.EffortTypeRepository
@@ -30,7 +31,6 @@ class OrganizationService (private val organizationRepository: OrganizationRepos
     }
 
     fun getOrganizations(page: Int, perPage: Int) : PagedResponse<OrganizationDetailsResponse> {
-        logger.info("ACCESS ATTEMPT")
         val pageRequest = PageRequest.of(page, perPage, Sort.Direction.DESC, "createdAt")
         val organizations = organizationRepository.findAll(pageRequest)
         val orgList : List<OrganizationDetailsResponse> = organizations.content
@@ -43,31 +43,24 @@ class OrganizationService (private val organizationRepository: OrganizationRepos
         return OrganizationDetailsResponse(org.id, org.name, org.description, org.donationTypes.map { it.name }, org.efforts.size)
     }
 
-//    fun getOrganizationsByUsername(username: String, page: Int, perPage: Int) : PagedResponse<OrganizationDetailsResponse> {
-//        val pageRequest = PageRequest.of(page, perPage, Sort.Direction.DESC, "createdAt")
-//        val organizations = organizationRepository.getOrganizationsByCreatedByUsername(username, pageRequest)
-//        val orgList : List<OrganizationDetailsResponse> = organizations.content
-//                .map { OrganizationDetailsResponse(it.id, it.name, it.description, it.donationTypes.map {dt -> dt.name}, it.efforts.size) }
-//        return PagedResponse(orgList, page, organizations.totalPages)
-//    }
+    fun getOrganizationsByUsername(username: String, page: Int, perPage: Int) : PagedResponse<OrganizationDetailsResponse> {
+        val pageRequest = PageRequest.of(page, perPage, Sort.Direction.DESC, "createdAt")
+        val organizations = organizationRepository.getOrganizationsByCreatedBy(username, pageRequest)
+        val orgList : List<OrganizationDetailsResponse> = organizations.content
+                .map { OrganizationDetailsResponse(it.id, it.name, it.description, it.donationTypes.map {dt -> dt.name}, it.efforts.size) }
+        return PagedResponse(orgList, page, organizations.totalPages)
+    }
 
     fun createOrganization(createRequest: OrganizationCreateRequest) : ResponseEntity<*> {
-        logger.info("INCOMING REQUEST: $createRequest")
-        logger.info("EFFORT TYPES: ${createRequest.donationTypes}")
         val effortTypes = effortTypeRepository.findByNameIn(createRequest.donationTypes)
-        logger.info("Effort Types found: $effortTypes")
-//        if (effortTypes.isEmpty()) throw BadRequestException("At least one donation type should be present.")
-        logger.info("HELLO ONE")
+        if (effortTypes.isEmpty()) throw BadRequestException("At least one donation type should be present.")
         val org = Organization(
                 name = createRequest.name,
                 description = createRequest.description
         )
-        logger.info("HELLO TWO")
         org.donationTypes.addAll(effortTypes)
         logger.info("ORGANIZATION TO BE SAVED: $org")
-        logger.info("HELLO THREE")
         val result = organizationRepository.save(org)
-        logger.info("HELLO FOUR")
         val location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/orgs/{id}")
                 .buildAndExpand(result.id).toUri()
         logger.info("Organization ${result.id} has been created.")
@@ -78,7 +71,7 @@ class OrganizationService (private val organizationRepository: OrganizationRepos
                                  patchRequest: OrganizationPatchRequest,
                                  currentUser: UserPrincipal) : ResponseEntity<*> {
         val org = organizationRepository.findById(orgId).orElse(null) ?: throw ResourceNotFoundException("Organization", "id", orgId)
-        if (org.createdBy != currentUser.user.id) throw AccessDeniedEx("You cannot edit an organization you did not create.")
+        if (org.createdBy != currentUser.user.username) throw AccessDeniedEx("You cannot edit an organization you did not create.")
         logger.info("Request: $patchRequest, original organization: $org")
         for (property in OrganizationPatchRequest::class.memberProperties) {
             val patchProperty = property.get(patchRequest) ?: continue
@@ -95,7 +88,7 @@ class OrganizationService (private val organizationRepository: OrganizationRepos
     fun deleteOrganizationDetails(orgId: Long,
                                  currentUser: UserPrincipal) : ResponseEntity<*> {
         val org = organizationRepository.findById(orgId).orElse(null) ?: throw ResourceNotFoundException("Organization", "id", orgId)
-        if (org.createdBy != currentUser.user.id && currentUser.user.roles.find { it.name == UserRole.ROLE_ADMIN } === null) throw AccessDeniedEx("You cannot delete an organization you did not create.")
+        if (org.createdBy != currentUser.user.username && currentUser.user.roles.find { it.name == UserRole.ROLE_ADMIN } === null) throw AccessDeniedEx("You cannot delete an organization you did not create.")
         logger.info("Requested deletion for organization: $org")
         organizationRepository.delete(org)
         logger.info("Organization ${org.id} deleted by ${currentUser.user.username}")

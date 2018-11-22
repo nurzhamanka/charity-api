@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface OrganizationRepository : JpaRepository<Organization, Long> {
 
-    fun getOrganizationsByCreatedBy(createdBy: Long, pageable: Pageable) : Page<Organization>
+    fun getOrganizationsByCreatedBy(createdBy: String, pageable: Pageable) : Page<Organization>
 }

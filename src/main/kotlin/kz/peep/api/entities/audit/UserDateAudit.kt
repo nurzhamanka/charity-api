@@ -12,9 +12,9 @@ abstract class UserDateAudit : DateAudit() {
 
     @CreatedBy
     @Column(nullable = false, updatable = false)
-    var createdBy: Long = -1
+    var createdBy: String = ""
 
     @LastModifiedBy
     @Column(nullable = false)
-    var updatedBy: Long = -1
+    var updatedBy: String = ""
 }

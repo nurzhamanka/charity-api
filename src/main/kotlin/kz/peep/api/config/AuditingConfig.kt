@@ -21,13 +21,13 @@ class AuditingConfig {
 }
 
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-class SpringSecurityAuditAware : AuditorAware<Long> {
+class SpringSecurityAuditAware : AuditorAware<String> {
 
     companion object {
         private val logger = LoggerFactory.getLogger(SpringSecurityAuditAware::class.java)
     }
 
-    override fun getCurrentAuditor(): Optional<Long> {
+    override fun getCurrentAuditor(): Optional<String> {
         val auth = SecurityContextHolder.getContext().authentication
 
         if (auth == null ||
@@ -38,6 +38,6 @@ class SpringSecurityAuditAware : AuditorAware<Long> {
 
         val userPrincipal = auth.principal as UserPrincipal
 
-        return Optional.ofNullable(userPrincipal.user.id)
+        return Optional.ofNullable(userPrincipal.user.username)
     }
 }
