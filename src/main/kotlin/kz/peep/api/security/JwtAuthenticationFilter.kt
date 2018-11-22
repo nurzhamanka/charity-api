@@ -36,7 +36,7 @@ class JwtAuthenticationFilter : OncePerRequestFilter() {
                 SecurityContextHolder.getContext().authentication = auth
             }
         } catch (ex: Exception) {
-            JwtAuthenticationFilter.logger.error("Could not set user authentication in security context", ex)
+            logger.error("Something went wrong with authentication.")
         }
 
         try {chain.doFilter(req, res)}

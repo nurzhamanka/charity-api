@@ -18,12 +18,12 @@ class EffortController (private val effortService: EffortService) {
     fun getEffortsByOrgId(@PathVariable(name = "id") id: Long,
                           @RequestParam(name = "page", defaultValue = "1") page: Int,
                           @RequestParam(name = "entries", defaultValue = "10") perPage: Int) = effortService.getEffortsByOrganization(id, page, perPage)
-
-    @GetMapping("/user/{username}")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    fun getEffortsByUsername(@PathVariable(name = "username") username: String,
-                             @RequestParam(name = "page", defaultValue = "1") page: Int,
-                             @RequestParam(name = "entries", defaultValue = "10") perPage: Int) = effortService.getEffortsByUsername(username, page, perPage)
+//
+//    @GetMapping("/user/{username}")
+//    @PreAuthorize("hasRole('ROLE_USER')")
+//    fun getEffortsByUsername(@PathVariable(name = "username") username: String,
+//                             @RequestParam(name = "page", defaultValue = "1") page: Int,
+//                             @RequestParam(name = "entries", defaultValue = "10") perPage: Int) = effortService.getEffortsByUsername(username, page, perPage)
 
     @GetMapping("/type/{donationType}")
     @PreAuthorize("hasRole('ROLE_USER')")

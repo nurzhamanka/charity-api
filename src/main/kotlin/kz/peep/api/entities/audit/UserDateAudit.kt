@@ -1,7 +1,6 @@
 package kz.peep.api.entities.audit
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import kz.peep.api.entities.AppUser
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.LastModifiedBy
 import javax.persistence.Column
@@ -12,9 +11,10 @@ import javax.persistence.MappedSuperclass
 abstract class UserDateAudit : DateAudit() {
 
     @CreatedBy
-    @Column(updatable = false)
-    lateinit var createdBy: AppUser
+    @Column(nullable = false, updatable = false)
+    var createdBy: Long = -1
 
     @LastModifiedBy
-    lateinit var updatedBy: AppUser
+    @Column(nullable = false)
+    var updatedBy: Long = -1
 }

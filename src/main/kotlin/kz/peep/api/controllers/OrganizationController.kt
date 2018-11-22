@@ -22,11 +22,11 @@ class OrganizationController (private val organizationService: OrganizationServi
     @PreAuthorize("hasRole('ROLE_USER')")
     fun getOrganizationById(@PathVariable(name = "id") id: Long) = organizationService.getOrganizationById(id)
 
-    @GetMapping("/user/{username}")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    fun getOrganizationsByUsername(@PathVariable(name = "username") username: String,
-                                   @RequestParam(name = "page", defaultValue = "1") page: Int,
-                                   @RequestParam(name = "entries", defaultValue = "10") perPage: Int) = organizationService.getOrganizationsByUsername(username, page, perPage)
+//    @GetMapping("/user/{username}")
+//    @PreAuthorize("hasRole('ROLE_USER')")
+//    fun getOrganizationsByUsername(@PathVariable(name = "username") username: String,
+//                                   @RequestParam(name = "page", defaultValue = "1") page: Int,
+//                                   @RequestParam(name = "entries", defaultValue = "10") perPage: Int) = organizationService.getOrganizationsByUsername(username, page, perPage)
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -35,11 +35,11 @@ class OrganizationController (private val organizationService: OrganizationServi
     @PatchMapping("/{id:\\d+}")
     @PreAuthorize("hasRole('ROLE_USER')")
     fun patchOrganization(@PathVariable(name = "id") id: Long,
-                         @Valid @RequestBody patchRequest: OrganizationPatchRequest,
-                         @CurrentUser currentUser: UserPrincipal) = organizationService.patchOrganizationDetails(id, patchRequest, currentUser)
+                          @Valid @RequestBody patchRequest: OrganizationPatchRequest,
+                          @CurrentUser currentUser: UserPrincipal) = organizationService.patchOrganizationDetails(id, patchRequest, currentUser)
 
     @DeleteMapping("/{id:\\d+}")
     @PreAuthorize("hasRole('ROLE_USER')")
     fun deleteOrganization(@PathVariable(name = "id") id: Long,
-                          @CurrentUser currentUser: UserPrincipal) = organizationService.deleteOrganizationDetails(id, currentUser)
+                           @CurrentUser currentUser: UserPrincipal) = organizationService.deleteOrganizationDetails(id, currentUser)
 }

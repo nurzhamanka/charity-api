@@ -40,12 +40,12 @@ class EffortService(private val effortRepository: EffortRepository,
         return PagedResponse(effortList, page, efforts.totalPages)
     }
 
-    fun getEffortsByUsername(username: String, page: Int, perPage: Int) : PagedResponse<EffortDetailsResponse> {
-        val pageRequest = PageRequest.of(page, perPage, Sort.Direction.DESC, "createdAt")
-        val efforts = effortRepository.findByCreatedByUsername(username, pageRequest)
-        val effortList = pageToDtoList(efforts)
-        return PagedResponse(effortList, page, efforts.totalPages)
-    }
+//    fun getEffortsByUsername(username: String, page: Int, perPage: Int) : PagedResponse<EffortDetailsResponse> {
+//        val pageRequest = PageRequest.of(page, perPage, Sort.Direction.DESC, "createdAt")
+//        val efforts = effortRepository.findByCreatedBy(username, pageRequest)
+//        val effortList = pageToDtoList(efforts)
+//        return PagedResponse(effortList, page, efforts.totalPages)
+//    }
 
     fun getEffortsByDonationType(donationType: EffortType, page: Int, perPage: Int) : PagedResponse<EffortDetailsResponse> {
         val pageRequest = PageRequest.of(page, perPage, Sort.Direction.DESC, "createdAt")
@@ -56,7 +56,7 @@ class EffortService(private val effortRepository: EffortRepository,
 
     fun createEffort(createRequest: EffortCreateRequest, orgId: Long, currentUser: UserPrincipal) : ResponseEntity<*> {
         val org = organizationRepository.findById(orgId).orElse(null) ?: throw ResourceNotFoundException("Organization", "id", orgId)
-        if (org.createdBy === currentUser.user) throw BadRequestException("You cannot donate to your own cause!")
+        if (org.createdBy == currentUser.user.id) throw BadRequestException("You cannot donate to your own cause!")
         val donationType = org.donationTypes.find { it.name == createRequest.type } ?: throw BadRequestException("This organization does not accept such donations!")
         when (createRequest.type) { // validation
             EffortType.MONEY -> if (createRequest.moneyAmount === null) throw BadRequestException("Donation amount required!")
@@ -91,7 +91,7 @@ class EffortService(private val effortRepository: EffortRepository,
     fun deleteEffort(orgId: Long, effId: Long, currentUser: UserPrincipal) : ResponseEntity<*> {
         val org = organizationRepository.findById(orgId).orElse(null) ?: throw ResourceNotFoundException("Organization", "id", orgId)
         val effort = org.efforts.find { it.id == effId } ?: throw ResourceNotFoundException("Effort", "id", effId)
-        if (effort.createdBy !== currentUser.user && currentUser.user.roles.find { it.name == UserRole.ROLE_ADMIN } === null) throw AccessDeniedEx("You cannot delete an effort you did not create.")
+        if (effort.createdBy != currentUser.user.id && currentUser.user.roles.find { it.name == UserRole.ROLE_ADMIN } === null) throw AccessDeniedEx("You cannot delete an effort you did not create.")
         logger.info("Requested deletion for Effort #$effId in Organization #$orgId")
         effortRepository.delete(effort)
         logger.info("Effort #$effId deleted by ${currentUser.user.username}")
@@ -104,7 +104,7 @@ class EffortService(private val effortRepository: EffortRepository,
                     moneyAmount = it.moneyAmount,
                     quantity = it.quantity,
                     clothingType = it.clothingType,
-                    donatedBy = it.createdBy.username,
+                    donatedBy = userRepository.findById(it.createdBy).get().username,
                     date = it.createdAt)
     }
 }

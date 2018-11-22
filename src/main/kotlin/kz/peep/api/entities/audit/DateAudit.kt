@@ -13,7 +13,7 @@ import javax.persistence.MappedSuperclass
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
 @JsonIgnoreProperties(value = ["createdAt", "updatedAt"], allowGetters = true)
-open class DateAudit : Serializable {
+abstract class DateAudit : Serializable {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

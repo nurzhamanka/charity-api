@@ -31,13 +31,13 @@ class AppExceptionHandler : ResponseEntityExceptionHandler() {
         return handleExceptionInternal(ex, response, HttpHeaders(), HttpStatus.FORBIDDEN, request)
     }
 
-    @ExceptionHandler(value = [BadRequestException::class, UsernameNotFoundException::class])
+    @ExceptionHandler(value = [BadRequestException::class])
     protected fun handleBadRequest(ex: RuntimeException, request: WebRequest): ResponseEntity<Any> {
         val response = ApiResponse(false, ex.message ?: "Unknown error")
         return handleExceptionInternal(ex, response, HttpHeaders(), HttpStatus.BAD_REQUEST, request)
     }
 
-    @ExceptionHandler(value = [ResourceNotFoundException::class])
+    @ExceptionHandler(value = [ResourceNotFoundException::class, UsernameNotFoundException::class])
     protected fun handleNotFound(ex: RuntimeException, request: WebRequest): ResponseEntity<Any> {
         val response = ApiResponse(false, ex.message ?: "Unknown error")
         return handleExceptionInternal(ex, response, HttpHeaders(), HttpStatus.NOT_FOUND, request)
