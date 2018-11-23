@@ -8,7 +8,9 @@ import kz.peep.api.dto.orgs.OrganizationPatchRequest
 import kz.peep.api.entities.Organization
 import kz.peep.api.infrastructure.exception.BadRequestException
 import kz.peep.api.infrastructure.exception.ResourceNotFoundException
+import kz.peep.api.infrastructure.structs.EffortType
 import kz.peep.api.infrastructure.structs.UserRole
+import kz.peep.api.infrastructure.structs.enumValueOfOrNull
 import kz.peep.api.repositories.EffortTypeRepository
 import kz.peep.api.repositories.OrganizationRepository
 import kz.peep.api.security.UserPrincipal
@@ -30,24 +32,30 @@ class OrganizationService (private val organizationRepository: OrganizationRepos
         private val logger: Logger = LoggerFactory.getLogger(OrganizationService::class.java)
     }
 
-    fun getOrganizations(page: Int, perPage: Int) : PagedResponse<OrganizationDetailsResponse> {
+    fun getOrganizations(page: Int, perPage: Int, badge: String?) : PagedResponse<OrganizationDetailsResponse> {
         val pageRequest = PageRequest.of(page, perPage, Sort.Direction.DESC, "createdAt")
-        val organizations = organizationRepository.findAll(pageRequest)
+        val badgeEnum : EffortType? = if (badge != null) EffortType::class.enumValueOfOrNull(badge.toUpperCase()) else null
+        val donationType = if (badgeEnum != null) effortTypeRepository.findByName(badgeEnum) else null
+        val organizations = if (donationType == null || badge!!.toUpperCase() == "ALL") {
+            organizationRepository.findAll(pageRequest)
+        } else {
+            organizationRepository.findAllByDonationTypes(donationType, pageRequest)
+        }
         val orgList : List<OrganizationDetailsResponse> = organizations.content
-                .map { OrganizationDetailsResponse(it.id, it.name, it.description, it.donationTypes.map {dt -> dt.name}, it.efforts.size) }
+                .map { OrganizationDetailsResponse(it.id, it.name, it.description, it.createdBy, it.donationTypes.map {dt -> dt.name}, it.efforts.size) }
         return PagedResponse(orgList, page, organizations.totalPages)
     }
 
     fun getOrganizationById(id: Long) : OrganizationDetailsResponse {
         val org = organizationRepository.findById(id).orElse(null) ?: throw ResourceNotFoundException("Organization", "id", id)
-        return OrganizationDetailsResponse(org.id, org.name, org.description, org.donationTypes.map { it.name }, org.efforts.size)
+        return OrganizationDetailsResponse(org.id, org.name, org.description, org.createdBy, org.donationTypes.map { it.name }, org.efforts.size)
     }
 
     fun getOrganizationsByUsername(username: String, page: Int, perPage: Int) : PagedResponse<OrganizationDetailsResponse> {
         val pageRequest = PageRequest.of(page, perPage, Sort.Direction.DESC, "createdAt")
         val organizations = organizationRepository.getOrganizationsByCreatedBy(username, pageRequest)
         val orgList : List<OrganizationDetailsResponse> = organizations.content
-                .map { OrganizationDetailsResponse(it.id, it.name, it.description, it.donationTypes.map {dt -> dt.name}, it.efforts.size) }
+                .map { OrganizationDetailsResponse(it.id, it.name, it.description, it.createdBy, it.donationTypes.map {dt -> dt.name}, it.efforts.size) }
         return PagedResponse(orgList, page, organizations.totalPages)
     }
 

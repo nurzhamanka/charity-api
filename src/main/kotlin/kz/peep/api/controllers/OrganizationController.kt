@@ -16,17 +16,18 @@ class OrganizationController (private val organizationService: OrganizationServi
     @GetMapping
     @PreAuthorize("hasRole('ROLE_USER')")
     fun getOrganizations(@RequestParam(name = "page", defaultValue = "1") page: Int,
-                         @RequestParam(name = "entries", defaultValue = "10") perPage: Int) = organizationService.getOrganizations(page, perPage)
+                         @RequestParam(name = "entries", defaultValue = "10") perPage: Int,
+                         @RequestParam(name = "badge", required = false) badge: String?) = organizationService.getOrganizations(page, perPage, badge)
 
     @GetMapping("/{id:\\d+}")
     @PreAuthorize("hasRole('ROLE_USER')")
     fun getOrganizationById(@PathVariable(name = "id") id: Long) = organizationService.getOrganizationById(id)
 
-//    @GetMapping("/user/{username}")
-//    @PreAuthorize("hasRole('ROLE_USER')")
-//    fun getOrganizationsByUsername(@PathVariable(name = "username") username: String,
-//                                   @RequestParam(name = "page", defaultValue = "1") page: Int,
-//                                   @RequestParam(name = "entries", defaultValue = "10") perPage: Int) = organizationService.getOrganizationsByUsername(username, page, perPage)
+    @GetMapping("/user/{username}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    fun getOrganizationsByUsername(@PathVariable(name = "username") username: String,
+                                   @RequestParam(name = "page", defaultValue = "1") page: Int,
+                                   @RequestParam(name = "entries", defaultValue = "10") perPage: Int) = organizationService.getOrganizationsByUsername(username, page, perPage)
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_USER')")

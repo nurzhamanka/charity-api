@@ -1,5 +1,6 @@
 package kz.peep.api.repositories
 
+import kz.peep.api.entities.EffortType
 import kz.peep.api.entities.Organization
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -10,4 +11,6 @@ import org.springframework.stereotype.Repository
 interface OrganizationRepository : JpaRepository<Organization, Long> {
 
     fun getOrganizationsByCreatedBy(createdBy: String, pageable: Pageable) : Page<Organization>
+
+    fun findAllByDonationTypes(donationType: EffortType, pageable: Pageable) : Page<Organization>
 }

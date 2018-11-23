@@ -16,13 +16,14 @@ data class Organization (
         @Size(max = 50)
         var name: String,
 
+        @Column(length = 3000)
         var description: String? = null,
 
         @OneToMany(mappedBy = "organization",
                 cascade = [CascadeType.ALL],
-                fetch = FetchType.EAGER,
+                fetch = FetchType.LAZY,
                 orphanRemoval = true)
-        val efforts: MutableSet<Effort> = HashSet(),
+        val efforts: List<Effort> = ArrayList(),
 
         @ManyToMany(fetch = FetchType.EAGER)
         @JoinTable(name = "ORGANIZATION_EFFORT_TYPE",
