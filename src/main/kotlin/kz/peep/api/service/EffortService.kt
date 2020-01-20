@@ -74,9 +74,7 @@ class EffortService(private val effortRepository: EffortRepository,
                 organization = org
         )
         //org.efforts.add(effort)
-        logger.info("EFFORT point 1")
         val result = effortRepository.save(effort)
-        logger.info("EFFORT point 2")
         val user = currentUser.user
         user.points += when (createRequest.type) {
             EffortType.MONEY -> (createRequest.moneyAmount!! / 100).roundToInt()
@@ -85,9 +83,7 @@ class EffortService(private val effortRepository: EffortRepository,
             EffortType.BLOOD -> createRequest.quantity!! * 4
             EffortType.SOUL -> createRequest.quantity!! * 12
         }
-        logger.info("EFFORT point 3")
         userRepository.save(user)
-        logger.info("EFFORT point 4")
         val location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/efforts/org/{orgId}")
                 .buildAndExpand(result.id).toUri()
         return ResponseEntity.created(location).body(ApiResponse(true, "Effort created successfully."))

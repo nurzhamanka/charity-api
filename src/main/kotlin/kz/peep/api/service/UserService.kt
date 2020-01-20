@@ -63,7 +63,7 @@ class UserService (private val userRepository: UserRepository,
             return ResponseEntity(ApiResponse(false, "Could not find user role in the database."), HttpStatus.BAD_REQUEST)
         }
 
-        if (user.username == "madiyar.dick@pizda.vagina") {
+        if (user.username == "admin@peep.kz") {
             val adminRole = roleRepository.findByName(UserRole.ROLE_ADMIN) ?: run {
                 logger.error("${UserRole.ROLE_ADMIN} missing from the database!")
                 return ResponseEntity(ApiResponse(false, "Could not find user role in the database."), HttpStatus.BAD_REQUEST)
